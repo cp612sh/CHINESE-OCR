@@ -37,18 +37,18 @@ class SolverWrapper(object):
         print('done')
 
         # For checkpoint
-        self.saver = tf.train.Saver(
-            max_to_keep=1, write_version=tf.train.SaverDef.V2)
-        self.writer = tf.summary.FileWriter(
-            logdir=logdir, graph=tf.get_default_graph(), flush_secs=5)
+        self.saver = tf.compat.v1.train.Saver(
+            max_to_keep=1, write_version=tf.compat.v1.train.SaverDef.V2)
+        self.writer = tf.compat.v1.summary.FileWriter(
+            logdir=logdir, graph=tf.compat.v1.get_default_graph(), flush_secs=5)
 
     def snapshot(self, sess, iter):
         net = self.net
         if cfg.TRAIN.BBOX_REG and 'bbox_pred' in net.layers and cfg.TRAIN.BBOX_NORMALIZE_TARGETS:
             # save original values
-            with tf.variable_scope('bbox_pred', reuse=True):
-                weights = tf.get_variable("weights")
-                biases = tf.get_variable("biases")
+            with tf.compat.v1.variable_scope('bbox_pred', reuse=True):
+                weights = tf.compat.v1.get_variable("weights")
+                biases = tf.compat.v1.get_variable("biases")
 
             orig_0 = weights.eval()
             orig_1 = biases.eval()
@@ -80,8 +80,8 @@ class SolverWrapper(object):
     def build_image_summary(self):
         # A simple graph for write image summary
 
-        log_image_data = tf.placeholder(tf.uint8, [None, None, 3])
-        log_image_name = tf.placeholder(tf.string)
+        log_image_data = tf.compat.v1.placeholder(tf.uint8, [None, None, 3])
+        log_image_name = tf.compat.v1.placeholder(tf.string)
         # import tensorflow.python.ops.gen_logging_ops as logging_ops
         from tensorflow.python.ops import gen_logging_ops
         from tensorflow.python.framework import ops as _ops
@@ -97,11 +97,11 @@ class SolverWrapper(object):
         total_loss, model_loss, rpn_cross_entropy, rpn_loss_box = self.net.build_loss(
             ohem=cfg.TRAIN.OHEM)
         # scalar summary
-        tf.summary.scalar('rpn_reg_loss', rpn_loss_box)
-        tf.summary.scalar('rpn_cls_loss', rpn_cross_entropy)
-        tf.summary.scalar('model_loss', model_loss)
-        tf.summary.scalar('total_loss', total_loss)
-        summary_op = tf.summary.merge_all()
+        tf.compat.v1.summary.scalar('rpn_reg_loss', rpn_loss_box)
+        tf.compat.v1.summary.scalar('rpn_cls_loss', rpn_cross_entropy)
+        tf.compat.v1.summary.scalar('model_loss', model_loss)
+        tf.compat.v1.summary.scalar('total_loss', total_loss)
+        summary_op = tf.compat.v1.summary.merge_all()
 
         log_image, log_image_data, log_image_name = \
             self.build_image_summary()
@@ -109,27 +109,27 @@ class SolverWrapper(object):
         # optimizer
         lr = tf.Variable(cfg.TRAIN.LEARNING_RATE, trainable=False)
         if cfg.TRAIN.SOLVER == 'Adam':
-            opt = tf.train.AdamOptimizer(cfg.TRAIN.LEARNING_RATE)
+            opt = tf.compat.v1.train.AdamOptimizer(cfg.TRAIN.LEARNING_RATE)
         elif cfg.TRAIN.SOLVER == 'RMS':
-            opt = tf.train.RMSPropOptimizer(cfg.TRAIN.LEARNING_RATE)
+            opt = tf.compat.v1.train.RMSPropOptimizer(cfg.TRAIN.LEARNING_RATE)
         else:
             # lr = tf.Variable(0.0, trainable=False)
             momentum = cfg.TRAIN.MOMENTUM
-            opt = tf.train.MomentumOptimizer(lr, momentum)
+            opt = tf.compat.v1.train.MomentumOptimizer(lr, momentum)
 
         global_step = tf.Variable(0, trainable=False)
         with_clip = True
         if with_clip:
-            tvars = tf.trainable_variables()
+            tvars = tf.compat.v1.trainable_variables()
             grads, norm = tf.clip_by_global_norm(
-                tf.gradients(total_loss, tvars), 10.0)
+                tf.gradients(ys=total_loss, xs=tvars), 10.0)
             train_op = opt.apply_gradients(
                 list(zip(grads, tvars)), global_step=global_step)
         else:
             train_op = opt.minimize(total_loss, global_step=global_step)
 
         # intialize variables
-        sess.run(tf.global_variables_initializer())
+        sess.run(tf.compat.v1.global_variables_initializer())
         restore_iter = 0
 
         # load vgg16
@@ -170,7 +170,7 @@ class SolverWrapper(object):
             # learning rate
             print(iter)
             if iter != 0 and iter % cfg.TRAIN.STEPSIZE == 0:
-                sess.run(tf.assign(lr, lr.eval() * cfg.TRAIN.GAMMA))
+                sess.run(tf.compat.v1.assign(lr, lr.eval() * cfg.TRAIN.GAMMA))
                 print(lr)
 
             # get one batch
@@ -254,10 +254,10 @@ def train_net(network,
               restore=False):
     """Train a Fast R-CNN network."""
 
-    config = tf.ConfigProto(allow_soft_placement=True)
+    config = tf.compat.v1.ConfigProto(allow_soft_placement=True)
     config.gpu_options.allocator_type = 'BFC'
     config.gpu_options.per_process_gpu_memory_fraction = 0.75
-    with tf.Session(config=config) as sess:
+    with tf.compat.v1.Session(config=config) as sess:
         sw = SolverWrapper(
             sess,
             network,

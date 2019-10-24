@@ -27,16 +27,16 @@ load network
 def load_tf_model():
     cfg.TEST.HAS_RPN = True  # Use RPN for proposals
     # init session
-    config = tf.ConfigProto(allow_soft_placement=True)
+    config = tf.compat.v1.ConfigProto(allow_soft_placement=True)
     net = get_network("VGGnet_test")
     # load model
-    saver = tf.train.Saver()
+    saver = tf.compat.v1.train.Saver()
     # sess = tf.Session(config=config)
-    sess = tf.Session()
+    sess = tf.compat.v1.Session()
     # ckpt_path = '/Users/xiaofeng/Code/Github/dataset/CHINESE_OCR/ctpn/ctpn/retrain/ckpt'
     ckpt_path = '/Users/chaipeixi/Downloads/ctpn/checkpoints'
     ckpt = tf.train.get_checkpoint_state(ckpt_path)
-    reader = tf.train.NewCheckpointReader(ckpt.model_checkpoint_path)
+    reader = tf.compat.v1.train.NewCheckpointReader(ckpt.model_checkpoint_path)
     var_to_shape_map = reader.get_variable_to_shape_map()
     for key in var_to_shape_map:
         print("Tensor_name is : ", key)

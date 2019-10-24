@@ -86,13 +86,13 @@ if __name__ == '__main__':
 
     cfg.TEST.HAS_RPN = True  # Use RPN for proposals
     # init session
-    config = tf.ConfigProto(allow_soft_placement=True)
-    sess = tf.Session(config=config)
+    config = tf.compat.v1.ConfigProto(allow_soft_placement=True)
+    sess = tf.compat.v1.Session(config=config)
     # load network
     net = get_network("VGGnet_test")
     # load model
     print('Loading network {:s}... '.format("VGGnet_test")),
-    saver = tf.train.Saver()
+    saver = tf.compat.v1.train.Saver()
     # saver.restore(sess,
     #               os.path.join(os.getcwd(), "checkpoints/model_final.ckpt"))
     saver.restore(sess,

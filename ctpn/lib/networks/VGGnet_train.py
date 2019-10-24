@@ -8,12 +8,13 @@ from ..fast_rcnn.config import cfg
 class VGGnet_train(Network):
     def __init__(self, trainable=True):
         self.inputs = []
-        self.data = tf.placeholder(tf.float32, shape=[None, None, None, 3], name='data')
-        self.im_info = tf.placeholder(tf.float32, shape=[None, 3], name='im_info')
-        self.gt_boxes = tf.placeholder(tf.float32, shape=[None, 5], name='gt_boxes')
-        self.gt_ishard = tf.placeholder(tf.int32, shape=[None], name='gt_ishard')
-        self.dontcare_areas = tf.placeholder(tf.float32, shape=[None, 4], name='dontcare_areas')
-        self.keep_prob = tf.placeholder(tf.float32)
+        tf.compat.v1.disable_eager_execution()
+        self.data = tf.compat.v1.placeholder(tf.float32, shape=[None, None, None, 3], name='data')
+        self.im_info = tf.compat.v1.placeholder(tf.float32, shape=[None, 3], name='im_info')
+        self.gt_boxes = tf.compat.v1.placeholder(tf.float32, shape=[None, 5], name='gt_boxes')
+        self.gt_ishard = tf.compat.v1.placeholder(tf.int32, shape=[None], name='gt_ishard')
+        self.dontcare_areas = tf.compat.v1.placeholder(tf.float32, shape=[None, 4], name='dontcare_areas')
+        self.keep_prob = tf.compat.v1.placeholder(tf.float32)
         self.layers = dict({'data': self.data, 'im_info': self.im_info, 'gt_boxes': self.gt_boxes, \
                             'gt_ishard': self.gt_ishard, 'dontcare_areas': self.dontcare_areas})
         self.trainable = trainable

@@ -13,21 +13,24 @@
 
 ``` 
 Bash
-##GPU环境
+## GPU环境
 sh setup.sh
 ## CPU环境
 sh setup-cpu.sh
-##CPU python3环境
+## CPU python3环境
 sh setup-python3.sh
 
 使用环境：python3.6+tensorflow1.7+cpu/gpu
 ```
 
 # 模型训练
-* 一共分为3个网络
-	 	**1. 文本方向检测网络-Classify(vgg16)**
-*  **2. 文本区域检测网络-CTPN(CNN+RNN)**
-*  **3. EndToEnd文本识别网络-CRNN(CNN+GRU/LSTM+CTC)**
+一共分为3个网络
+
+**1. 文本方向检测网络-Classify(vgg16)**
+
+**2. 文本区域检测网络-CTPN(CNN+RNN)**
+
+**3. EndToEnd文本识别网络-CRNN(CNN+GRU/LSTM+CTC)**
 
 # 文字方向检测-vgg分类
 ```bash

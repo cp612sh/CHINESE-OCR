@@ -1,5 +1,8 @@
-# import sys
-# sys.path.insert(1, "./crnn")
+## https://stackoverflow.com/questions/53014306/error-15-initializing-libiomp5-dylib-but-found-libiomp5-dylib-already-initial
+import os
+
+os.environ['KMP_DUPLICATE_LIB_OK']='True'
+################################################################
 import torch.nn as nn
 import torch.nn.parallel
 # import utils
@@ -14,12 +17,12 @@ class BidirectionalLSTM(nn.Module):
         self.embedding = nn.Linear(nHidden * 2, nOut)
 
     def forward(self, input):
-        recurrent, _ = utils.data_parallel(self.rnn, input,
+        recurrent, _ = data_parallel(self.rnn, input,
                                            self.ngpu)  # [T, b, h * 2]
 
         T, b, h = recurrent.size()
         t_rec = recurrent.view(T * b, h)
-        output = utils.data_parallel(self.embedding, t_rec,
+        output = data_parallel(self.embedding, t_rec,
                                      self.ngpu)  # [T * b, nOut]
         output = output.view(T, b, -1)
 

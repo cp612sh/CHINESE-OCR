@@ -14,10 +14,11 @@ from ..fast_rcnn.config import cfg
 class VGGnet_test(Network):
     def __init__(self, trainable=True):
         self.inputs = []
-        self.data = tf.placeholder(tf.float32, shape=[None, None, None, 3])
+        tf.compat.v1.disable_eager_execution()
+        self.data = tf.compat.v1.placeholder(tf.float32, shape=[None, None, None, 3])
         # a list of [image_height, image_width, scale_ratios]
-        self.im_info = tf.placeholder(tf.float32, shape=[None, 3])
-        self.keep_prob = tf.placeholder(tf.float32)
+        self.im_info = tf.compat.v1.placeholder(tf.float32, shape=[None, 3])
+        self.keep_prob = tf.compat.v1.placeholder(tf.float32)
         self.layers = dict({'data': self.data, 'im_info': self.im_info})
         self.trainable = trainable
         self.setup()
