@@ -1,7 +1,8 @@
-import sys
-sys.path.insert(1, "./crnn")
+# import sys
+# sys.path.insert(1, "./crnn")
 import torch.nn as nn
-import utils
+import torch.nn.parallel
+# import utils
 
 
 class BidirectionalLSTM(nn.Module):
@@ -72,13 +73,20 @@ class CRNN(nn.Module):
 
     def forward(self, input):
         # conv features
-        conv = utils.data_parallel(self.cnn, input, self.ngpu)
+        conv = data_parallel(self.cnn, input, self.ngpu)
         b, c, h, w = conv.size()
         assert h == 1, "the height of conv must be 1"
         conv = conv.squeeze(2)
         conv = conv.permute(2, 0, 1)  # [w, b, c]
 
         # rnn features
-        output = utils.data_parallel(self.rnn, conv, self.ngpu)
+        output = data_parallel(self.rnn, conv, self.ngpu)
 
         return output
+
+def data_parallel(model, input, ngpu):
+    if isinstance(input.data, torch.cuda.FloatTensor) and ngpu > 1:
+        output = nn.parallel.data_parallel(model, input, range(ngpu))
+    else:
+        output = model(input)
+    return output
