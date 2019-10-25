@@ -29,7 +29,7 @@ def load():
     model.compile(
         optimizer=sgd, loss='categorical_crossentropy', metrics=['accuracy'])
     model.load_weights(
-        '/Volumes/extDisk1/datasets/chinese-ocr/modelAngle.h5')
+        '/mnt/disk/datasets/chinese-ocr/modelAngle.h5')
     return model
 
 

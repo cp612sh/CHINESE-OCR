@@ -34,7 +34,7 @@ def load_tf_model():
     # sess = tf.Session(config=config)
     sess = tf.compat.v1.Session()
     # ckpt_path = '/Users/xiaofeng/Code/Github/dataset/CHINESE_OCR/ctpn/ctpn/retrain/ckpt'
-    ckpt_path = '/Volumes/extDisk1/datasets/chinese-ocr/ctpn/checkpoints'
+    ckpt_path = '/mnt/disk/datasets/chinese-ocr/ctpn/checkpoints'
     ckpt = tf.train.get_checkpoint_state(ckpt_path)
     reader = tf.compat.v1.train.NewCheckpointReader(ckpt.model_checkpoint_path)
     var_to_shape_map = reader.get_variable_to_shape_map()
