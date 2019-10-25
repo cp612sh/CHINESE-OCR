@@ -59,7 +59,7 @@ parser.add_argument(
     '--crnn',
     help="path to crnn (to continue training)",
     default=
-    '/Users/xiaofeng/Code/Github/dataset/CHINESE_OCR/save_model/netCRNN.pth'
+    '/mnt/disk/datasets/chinese-ocr/netCRNN_pytorch.pth'
 )
 # parser.add_argument('--crnn', help="path to crnn (to continue training)",default='')
 parser.add_argument('--alphabet', default=alphabet)
