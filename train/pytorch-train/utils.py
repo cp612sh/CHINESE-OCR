@@ -120,7 +120,8 @@ def oneHot(v, v_length, nc):
 
 
 def loadData(v, data):
-    v.data.resize_(data.size()).copy_(data)
+    # v.data.resize_(data.size()).copy_(data)
+    v.resize_(data.size()).copy_(data)
 
 
 def prettyPrint(v):
