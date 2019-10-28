@@ -71,7 +71,7 @@ class CRNN(nn.Module):
 
     def forward(self, input):
         # conv features
-        conv = utils.data_parallel(self.cnn, input, self.ngpu)
+        conv = data_parallel(self.cnn, input, self.ngpu)
         b, c, h, w = conv.size()
         assert h == 1, "the height of conv must be 1"
         conv = conv.squeeze(2)
